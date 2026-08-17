@@ -67,7 +67,7 @@ Create a `.env` file:
 GITHUB_CLIENT_ID=your_client_id
 GITHUB_CLIENT_SECRET=your_client_secret
 GITHUB_APP_ID=your_app_id
-GITHUB_REDIRECT_URI=http://localhost:8000/auth/github/callback
+GITHUB_REDIRECT_URI=http://localhost:8001/auth/github/callback
 ```
 
 ## Execution
@@ -79,13 +79,13 @@ cd backend
 python main.py
 ```
 
-Server runs at `http://localhost:8000` with auto-reload.
+Server runs at `http://localhost:8001` with auto-reload.
 
 ### Docker
 
 ```bash
 docker build -t api-to-mcp .
-docker run -p 8000:8000 --env-file .env api-to-mcp
+docker run -p 8001:8001 --env-file .env api-to-mcp
 ```
 
 ### API Usage

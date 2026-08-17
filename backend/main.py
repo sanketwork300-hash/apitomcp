@@ -5,6 +5,8 @@ import os
 from typing import Any
 
 from dotenv import load_dotenv
+load_dotenv()
+
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
@@ -27,7 +29,7 @@ from backend.generator.generate import (
     MCPServerGenerator,
 )
 
-load_dotenv()
+
 
 
 app = FastAPI(
@@ -543,7 +545,7 @@ if __name__ == "__main__":
     port = int(
         os.getenv(
             "PORT",
-            "3000",
+            "8001",
         )
     )
 
