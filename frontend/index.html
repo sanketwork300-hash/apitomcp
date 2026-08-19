@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API-to-MCP Test</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    h1 {
+      margin-bottom: 8px;
+    }
+
+    .card {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+
+    button {
+      padding: 10px 16px;
+      cursor: pointer;
+      border: none;
+      border-radius: 6px;
+      background: #24292f;
+      color: white;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0 16px;
+      box-sizing: border-box;
+    }
+
+    .repo {
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      margin: 8px 0;
+      cursor: pointer;
+    }
+
+    .repo:hover {
+      background: #f5f5f5;
+    }
+
+    pre {
+      background: #f6f8fa;
+      padding: 15px;
+      overflow-x: auto;
+      border-radius: 6px;
+    }
+
+    .success {
+      color: green;
+    }
+
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>API-to-MCP Test Console</h1>
+  <p>Test GitHub OAuth → Repository → OpenAPI → MCP generation.</p>
+
+  <!-- STEP 1 -->
+  <div class="card">
+    <h2>1. GitHub Authentication</h2>
+
+    <button onclick="loginWithGitHub()">
+      Connect GitHub
+    </button>
+
+    <p id="authStatus"></p>
+
+    <label>Access Token</label>
+    <input
+      id="accessToken"
+      type="password"
+      placeholder="Paste GitHub access token here"
+    />
+
+    <button onclick="loadRepositories()">
+      Load Repositories
+    </button>
+  </div>
+
+
+  <!-- STEP 2 -->
+  <div class="card">
+    <h2>2. Select Repository</h2>
+
+    <div id="repositories">
+      Authenticate first.
+    </div>
+  </div>
+
+
+  <!-- STEP 3 -->
+  <div class="card">
+    <h2>3. OpenAPI File</h2>
+
+    <label>Owner</label>
+    <input id="owner" placeholder="sanketwork300-hash" />
+
+    <label>Repository</label>
+    <input id="repo" placeholder="stocks_demo" />
+
+    <label>Branch</label>
+    <input id="branch" value="main" />
+
+    <label>OpenAPI File Path</label>
+    <input
+      id="path"
+      placeholder="openapi.yaml"
+    />
+
+    <label>MCP Server Name</label>
+    <input
+      id="serverName"
+      value="stocks_demo"
+    />
+
+    <button onclick="generateMCP()">
+      Generate MCP Server
+    </button>
+
+    <p id="generateStatus"></p>
+  </div>
+
+
+  <!-- STEP 4 -->
+  <div class="card">
+    <h2>4. Result</h2>
+
+    <pre id="result">
+No result yet.
+    </pre>
+  </div>
+
+
+<script>
+
+const API_BASE = "http://localhost:8001";
+
+
+function loginWithGitHub() {
+
+  window.location.href =
+    `${API_BASE}/auth/github/login`;
+
+}
+
+
+async function loadRepositories() {
+
+  const token =
+    document.getElementById("accessToken").value.trim();
+
+  if (!token) {
+    alert("Enter GitHub access token first.");
+    return;
+  }
+
+  const container =
+    document.getElementById("repositories");
+
+  container.innerHTML = "Loading repositories...";
+
+  try {
+
+    const response = await fetch(
+      `${API_BASE}/github/repositories?access_token=${encodeURIComponent(token)}`
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        data.detail || "Failed to load repositories"
+      );
+    }
+
+    container.innerHTML = "";
+
+    if (!data.repositories.length) {
+      container.innerHTML =
+        "<p>No repositories found.</p>";
+      return;
+    }
+
+    data.repositories.forEach(repo => {
+
+      const div =
+        document.createElement("div");
+
+      div.className = "repo";
+
+      div.innerHTML = `
+        <strong>${repo.full_name}</strong>
+        <br>
+        <small>
+          Branch: ${repo.default_branch}
+        </small>
+      `;
+
+      div.onclick = () => {
+
+        document.getElementById("owner").value =
+          repo.owner;
+
+        document.getElementById("repo").value =
+          repo.name;
+
+        document.getElementById("branch").value =
+          repo.default_branch;
+
+      };
+
+      container.appendChild(div);
+
+    });
+
+  } catch (error) {
+
+    container.innerHTML =
+      `<p class="error">${error.message}</p>`;
+
+  }
+}
+
+
+async function generateMCP() {
+
+  const token =
+    document.getElementById("accessToken").value.trim();
+
+  const owner =
+    document.getElementById("owner").value.trim();
+
+  const repo =
+    document.getElementById("repo").value.trim();
+
+  const branch =
+    document.getElementById("branch").value.trim();
+
+  const path =
+    document.getElementById("path").value.trim();
+
+  const serverName =
+    document.getElementById("serverName").value.trim();
+
+
+  if (!token || !owner || !repo || !path) {
+
+    alert(
+      "Access token, owner, repo and OpenAPI path are required."
+    );
+
+    return;
+
+  }
+
+
+  const status =
+    document.getElementById("generateStatus");
+
+  status.innerText =
+    "Generating MCP server...";
+
+
+  try {
+
+    const response = await fetch(
+      `${API_BASE}/pipeline/generate`,
+      {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+
+          access_token: token,
+
+          owner: owner,
+
+          repo: repo,
+
+          branch: branch || null,
+
+          path: path,
+
+          server_name:
+            serverName || null
+
+        })
+
+      }
+    );
+
+
+    const data =
+      await response.json();
+
+
+    document.getElementById("result")
+      .textContent =
+      JSON.stringify(
+        data,
+        null,
+        2
+      );
+
+
+    if (!response.ok) {
+
+      status.innerHTML =
+        `<span class="error">
+          Generation failed
+        </span>`;
+
+      return;
+
+    }
+
+
+    status.innerHTML =
+      `<span class="success">
+        MCP server generated successfully.
+      </span>`;
+
+  } catch (error) {
+
+    status.innerHTML =
+      `<span class="error">
+        ${error.message}
+      </span>`;
+
+  }
+
+}
+
+</script>
+
+</body>
+</html>

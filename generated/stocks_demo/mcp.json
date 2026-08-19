@@ -1,0 +1,666 @@
+{
+  "server": {
+    "name": "stock_data_api",
+    "title": "Stock Data API",
+    "description": "Simple stock data API powered by Yahoo Finance",
+    "api_version": "1.0.0"
+  },
+  "source": {
+    "type": "github",
+    "owner": "sanketwork300-hash",
+    "repository": "stocks_demo",
+    "branch": "main",
+    "path": "openapi.yaml"
+  },
+  "servers": [],
+  "security": [],
+  "tools": [
+    {
+      "name": "health_api_health_get",
+      "operation_id": "health_api_health_get",
+      "description": "Health",
+      "input_schema": {
+        "type": "object",
+        "properties": {}
+      },
+      "output_schema": {
+        "x-status-code": "200",
+        "x-content-type": "application/json"
+      },
+      "http": {
+        "method": "GET",
+        "path": "/api/health"
+      },
+      "parameters": [],
+      "request_body": null,
+      "responses": [
+        {
+          "status_code": "200",
+          "description": "Successful Response",
+          "content": {
+            "application/json": {}
+          }
+        }
+      ],
+      "security": [],
+      "tags": []
+    },
+    {
+      "name": "stock_api_stock_ticker_get",
+      "operation_id": "stock_api_stock__ticker__get",
+      "description": "Stock",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "ticker": {
+            "type": "string",
+            "title": "Ticker",
+            "x-parameter-location": "path"
+          }
+        },
+        "required": [
+          "ticker"
+        ]
+      },
+      "output_schema": {
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "title": "Symbol"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "price": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price"
+          },
+          "previous_close": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Previous Close"
+          },
+          "change": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Change"
+          },
+          "change_percent": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Change Percent"
+          },
+          "currency": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Currency"
+          },
+          "exchange": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Exchange"
+          }
+        },
+        "type": "object",
+        "required": [
+          "symbol"
+        ],
+        "title": "StockResponse",
+        "x-status-code": "200",
+        "x-content-type": "application/json"
+      },
+      "http": {
+        "method": "GET",
+        "path": "/api/stock/{ticker}"
+      },
+      "parameters": [
+        {
+          "name": "ticker",
+          "location": "path",
+          "required": true,
+          "description": "",
+          "schema": {
+            "type": "string",
+            "title": "Ticker"
+          }
+        }
+      ],
+      "request_body": null,
+      "responses": [
+        {
+          "status_code": "200",
+          "description": "Successful Response",
+          "content": {
+            "application/json": {
+              "properties": {
+                "symbol": {
+                  "type": "string",
+                  "title": "Symbol"
+                },
+                "name": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Name"
+                },
+                "price": {
+                  "anyOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Price"
+                },
+                "previous_close": {
+                  "anyOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Previous Close"
+                },
+                "change": {
+                  "anyOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Change"
+                },
+                "change_percent": {
+                  "anyOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Change Percent"
+                },
+                "currency": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Currency"
+                },
+                "exchange": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Exchange"
+                }
+              },
+              "type": "object",
+              "required": [
+                "symbol"
+              ],
+              "title": "StockResponse"
+            }
+          }
+        },
+        {
+          "status_code": "422",
+          "description": "Validation Error",
+          "content": {
+            "application/json": {
+              "properties": {
+                "detail": {
+                  "items": {
+                    "properties": {
+                      "loc": {
+                        "items": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "integer"
+                            }
+                          ]
+                        },
+                        "type": "array",
+                        "title": "Location"
+                      },
+                      "msg": {
+                        "type": "string",
+                        "title": "Message"
+                      },
+                      "type": {
+                        "type": "string",
+                        "title": "Error Type"
+                      },
+                      "input": {
+                        "title": "Input"
+                      },
+                      "ctx": {
+                        "type": "object",
+                        "title": "Context"
+                      }
+                    },
+                    "type": "object",
+                    "required": [
+                      "loc",
+                      "msg",
+                      "type"
+                    ],
+                    "title": "ValidationError"
+                  },
+                  "type": "array",
+                  "title": "Detail"
+                }
+              },
+              "type": "object",
+              "title": "HTTPValidationError"
+            }
+          }
+        }
+      ],
+      "security": [],
+      "tags": []
+    },
+    {
+      "name": "stock_history_api_stock_ticker_history_get",
+      "operation_id": "stock_history_api_stock__ticker__history_get",
+      "description": "Stock History",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "ticker": {
+            "type": "string",
+            "title": "Ticker",
+            "x-parameter-location": "path"
+          },
+          "period": {
+            "type": "string",
+            "default": "1mo",
+            "title": "Period",
+            "x-parameter-location": "query"
+          },
+          "interval": {
+            "type": "string",
+            "default": "1d",
+            "title": "Interval",
+            "x-parameter-location": "query"
+          }
+        },
+        "required": [
+          "ticker"
+        ]
+      },
+      "output_schema": {
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "title": "Symbol"
+          },
+          "period": {
+            "type": "string",
+            "title": "Period"
+          },
+          "interval": {
+            "type": "string",
+            "title": "Interval"
+          },
+          "data": {
+            "items": {
+              "properties": {
+                "date": {
+                  "type": "string",
+                  "title": "Date"
+                },
+                "open": {
+                  "anyOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Open"
+                },
+                "high": {
+                  "anyOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "High"
+                },
+                "low": {
+                  "anyOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Low"
+                },
+                "close": {
+                  "anyOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Close"
+                },
+                "volume": {
+                  "anyOf": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Volume"
+                }
+              },
+              "type": "object",
+              "required": [
+                "date"
+              ],
+              "title": "HistoricalDataPoint"
+            },
+            "type": "array",
+            "title": "Data"
+          }
+        },
+        "type": "object",
+        "required": [
+          "symbol",
+          "period",
+          "interval",
+          "data"
+        ],
+        "title": "HistoricalResponse",
+        "x-status-code": "200",
+        "x-content-type": "application/json"
+      },
+      "http": {
+        "method": "GET",
+        "path": "/api/stock/{ticker}/history"
+      },
+      "parameters": [
+        {
+          "name": "ticker",
+          "location": "path",
+          "required": true,
+          "description": "",
+          "schema": {
+            "type": "string",
+            "title": "Ticker"
+          }
+        },
+        {
+          "name": "period",
+          "location": "query",
+          "required": false,
+          "description": "",
+          "schema": {
+            "type": "string",
+            "default": "1mo",
+            "title": "Period"
+          }
+        },
+        {
+          "name": "interval",
+          "location": "query",
+          "required": false,
+          "description": "",
+          "schema": {
+            "type": "string",
+            "default": "1d",
+            "title": "Interval"
+          }
+        }
+      ],
+      "request_body": null,
+      "responses": [
+        {
+          "status_code": "200",
+          "description": "Successful Response",
+          "content": {
+            "application/json": {
+              "properties": {
+                "symbol": {
+                  "type": "string",
+                  "title": "Symbol"
+                },
+                "period": {
+                  "type": "string",
+                  "title": "Period"
+                },
+                "interval": {
+                  "type": "string",
+                  "title": "Interval"
+                },
+                "data": {
+                  "items": {
+                    "properties": {
+                      "date": {
+                        "type": "string",
+                        "title": "Date"
+                      },
+                      "open": {
+                        "anyOf": [
+                          {
+                            "type": "number"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ],
+                        "title": "Open"
+                      },
+                      "high": {
+                        "anyOf": [
+                          {
+                            "type": "number"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ],
+                        "title": "High"
+                      },
+                      "low": {
+                        "anyOf": [
+                          {
+                            "type": "number"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ],
+                        "title": "Low"
+                      },
+                      "close": {
+                        "anyOf": [
+                          {
+                            "type": "number"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ],
+                        "title": "Close"
+                      },
+                      "volume": {
+                        "anyOf": [
+                          {
+                            "type": "integer"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ],
+                        "title": "Volume"
+                      }
+                    },
+                    "type": "object",
+                    "required": [
+                      "date"
+                    ],
+                    "title": "HistoricalDataPoint"
+                  },
+                  "type": "array",
+                  "title": "Data"
+                }
+              },
+              "type": "object",
+              "required": [
+                "symbol",
+                "period",
+                "interval",
+                "data"
+              ],
+              "title": "HistoricalResponse"
+            }
+          }
+        },
+        {
+          "status_code": "422",
+          "description": "Validation Error",
+          "content": {
+            "application/json": {
+              "properties": {
+                "detail": {
+                  "items": {
+                    "properties": {
+                      "loc": {
+                        "items": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "integer"
+                            }
+                          ]
+                        },
+                        "type": "array",
+                        "title": "Location"
+                      },
+                      "msg": {
+                        "type": "string",
+                        "title": "Message"
+                      },
+                      "type": {
+                        "type": "string",
+                        "title": "Error Type"
+                      },
+                      "input": {
+                        "title": "Input"
+                      },
+                      "ctx": {
+                        "type": "object",
+                        "title": "Context"
+                      }
+                    },
+                    "type": "object",
+                    "required": [
+                      "loc",
+                      "msg",
+                      "type"
+                    ],
+                    "title": "ValidationError"
+                  },
+                  "type": "array",
+                  "title": "Detail"
+                }
+              },
+              "type": "object",
+              "title": "HTTPValidationError"
+            }
+          }
+        }
+      ],
+      "security": [],
+      "tags": []
+    }
+  ],
+  "metadata": {
+    "openapi_version": "3.1.0",
+    "endpoint_count": 3,
+    "tool_count": 3
+  }
+}

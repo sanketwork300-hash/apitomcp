@@ -111,12 +111,8 @@ async def github_callback(code: str) -> dict[str, Any]:
             detail="GitHub did not return an access token",
         )
 
-    # For the initial test pipeline we return the token directly.
-    # In production, store it securely in a session/database instead.
-    return {
-        "success": True,
-        "access_token": access_token,
-        "token_type": token_data.get("token_type", "bearer"),
-        "scope": token_data.get("scope"),
-    }
+    frontend_url = os.getenv("FRONTEND_URL", "http://localhost:3000")
+    return RedirectResponse(
+        url=f"{frontend_url}/#access_token={access_token}"
+    )
 
